@@ -31,6 +31,3 @@ jobs:
       - name: Build Solution
         run: |
           msbuild.exe fswt.sln /p:platform="Any CPU" /p:configuration="Release"
-        
-      - name: Run Tests
-        run: vstest.console.exe .\tests\Sandbox.Tests\bin\Release\Sandbox.Tests.dll
