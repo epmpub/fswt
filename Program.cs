@@ -6,15 +6,17 @@ namespace fswt
 {
     class fswt
     {
-        static string[] commandLineArgs = Environment.GetCommandLineArgs();
+        static string[] Args = Environment.GetCommandLineArgs();
+        static string cmd_str = null;
 
-        static void Exec(String str_cmd)
+
+        static void Exec(String cmdex)
         {
             Process process = new Process();
 
             // 设置要执行的命令和参数
             process.StartInfo.FileName = "cmd.exe";
-            process.StartInfo.Arguments = $"/C {str_cmd}"; // 在此处替换为您要执行的命令
+            process.StartInfo.Arguments = $"/C {cmdex}"; // 在此处替换为您要执行的命令
 
             // 配置进程启动信息
             process.StartInfo.UseShellExecute = false; // 设置为 false 以重定向输入和输出
@@ -44,16 +46,17 @@ namespace fswt
         }
         static void Main(string[] args)
         {
-            if (args.Length == 0 || args.Length > 1)
+            Console.WriteLine(Args.Length);
+
+            if (Args.Length == 0 || Args.Length != 4)
             {
                 Console.WriteLine("FileSystem Watcher Utilty. V0.1\n");
-                Console.WriteLine("usage: fswt  <command>");
-                Console.WriteLine("Description: watch you current directory EXE file created/changed event and execute your specified command.\n");
+                Console.WriteLine("usage: fswt  <FileType> <FolderPath> <Command>");
+                Console.WriteLine("Description: Monitor you specify path of directory and  fileType created/changed event and execute your specified command.\n");
 
                 Console.WriteLine(
                                   $"<command>: you want to execute script or command \n \n" +
-                                  $"for example: fswt 'dir *.exe' \n" +
-                                  $"Test Github action \n" +
+                                  $"for example: fswt *.exe c:\\Windows 'dir *.exe' \n" +
                                   $"Project WebSite: https://github.com/epmpub/fswt.git"
                                   );
 
@@ -61,7 +64,11 @@ namespace fswt
             }
 
 
-            var watcher = new FileSystemWatcher(@".");
+            string command = Args[3];
+            string folderPath = Args[2];
+            string fileExt = Args[1];
+
+            var watcher = new FileSystemWatcher(folderPath);
 
             watcher.NotifyFilter = NotifyFilters.Attributes
                                  | NotifyFilters.CreationTime
@@ -78,13 +85,13 @@ namespace fswt
             watcher.Renamed += OnRenamed;
             watcher.Error += OnError;
 
-            watcher.Filter = "*.exe";
+            watcher.Filter = fileExt;
             watcher.IncludeSubdirectories = true;
             watcher.EnableRaisingEvents = true;
 
-            Console.WriteLine("Press enter to exit.");
+            Console.WriteLine("Moniter is running.Press enter to exit.");
 
-            string arg1 = commandLineArgs[1];
+            cmd_str = command;
 
             Console.ReadLine();
         }
@@ -110,9 +117,7 @@ namespace fswt
 
         private static void ExecAction()
         {
-            string arg1 = commandLineArgs[1];
-            string cmd = $"{arg1}";
-            Exec(cmd);
+            Exec(cmd_str);
         }
 
         private static void OnDeleted(object sender, FileSystemEventArgs e) =>
