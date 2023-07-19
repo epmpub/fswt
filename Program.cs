@@ -46,11 +46,10 @@ namespace fswt
         }
         static void Main(string[] args)
         {
-            Console.WriteLine(Args.Length);
 
             if (Args.Length == 0 || Args.Length != 4)
             {
-                Console.WriteLine("FileSystem Watcher Utilty. V0.1\n");
+                Console.WriteLine("FileSystem Watcher Utilty. V0.2\n");
                 Console.WriteLine("usage: fswt  <FileType> <FolderPath> <Command>");
                 Console.WriteLine("Description: Monitor you specify path of directory and  fileType created/changed event and execute your specified command.\n");
 
