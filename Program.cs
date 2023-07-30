@@ -7,16 +7,19 @@ namespace fswt
     class fswt
     {
         static string[] Args = Environment.GetCommandLineArgs();
-        static string cmd_str = null;
 
-
-        static void Exec(String cmdex)
+        static void ExeCmd(string filePath,String oldCmd)
         {
+            Console.WriteLine($"file path is ： {filePath}");
+            string newCmd = oldCmd.Replace("_",filePath);
+
+            Console.WriteLine($"my_cmd = {newCmd}");
+
             Process process = new Process();
 
             // 设置要执行的命令和参数
             process.StartInfo.FileName = "cmd.exe";
-            process.StartInfo.Arguments = $"/C {cmdex}"; // 在此处替换为您要执行的命令
+            process.StartInfo.Arguments = $"/C {newCmd}"; // 在此处替换为您要执行的命令
 
             // 配置进程启动信息
             process.StartInfo.UseShellExecute = false; // 设置为 false 以重定向输入和输出
@@ -63,9 +66,11 @@ namespace fswt
             }
 
 
-            string command = Args[3];
-            string folderPath = Args[2];
             string fileExt = Args[1];
+            string folderPath = Args[2];
+            string command = Args[3];
+
+
 
             var watcher = new FileSystemWatcher(folderPath);
 
@@ -90,7 +95,6 @@ namespace fswt
 
             Console.WriteLine("Moniter is running.Press enter to exit.");
 
-            cmd_str = command;
 
             Console.ReadLine();
         }
@@ -102,7 +106,6 @@ namespace fswt
                 return;
             }
             Console.WriteLine($"Changed: {e.FullPath}");
-            ExecAction();
 
         }
 
@@ -110,13 +113,8 @@ namespace fswt
         {
             string value = $"File {e.FullPath} Created";
             Console.WriteLine(value);
-            ExecAction();
+            ExeCmd(e.FullPath,Args[3]);
 
-        }
-
-        private static void ExecAction()
-        {
-            Exec(cmd_str);
         }
 
         private static void OnDeleted(object sender, FileSystemEventArgs e) =>
